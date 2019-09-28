@@ -1,0 +1,30 @@
+<ion-header>
+  <ion-toolbar color="secondary">
+    <ion-avatar slot="start" class="ion-margin">
+      <img src="{{profile}}">
+    </ion-avatar>
+    <ion-label>
+      <h1><b>Newsfeed</b></h1>
+      <p>{{name}}</p>
+    </ion-label>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <!-- actual content -->
+  <ion-card *ngFor="let post of posts" (click)="viewPost(post.id)">
+    <ion-item>
+      <ion-avatar class="ion-margin-end">
+        <img src='{{post._authorPic}}' />
+      </ion-avatar>
+      <ion-label>
+        <h3><b>{{post._author}}</b></h3>
+        <p>{{post._dateAdded}}</p>
+      </ion-label>
+      <ion-button fill="outline" slot="end">View</ion-button>
+    </ion-item>
+
+    <ion-card-content>{{post._content}}</ion-card-content>
+    <img src='{{post._fileData}}' *ngIf="null!==post._fileData && undefined !==post._fileData" />
+  </ion-card>
+</ion-content>

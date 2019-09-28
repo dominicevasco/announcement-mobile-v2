@@ -1,0 +1,35 @@
+<ion-content>
+  <ion-card>
+      <ion-card-header>
+          <ion-card-title>Sign In</ion-card-title>
+          <ion-card-subtitle>Welcome to the announcement app</ion-card-subtitle>
+      </ion-card-header>
+      <ion-card-content>
+          <ion-item>
+              <ion-label position="stacked">Email Address</ion-label>
+              <ion-input type="email" inputmode="email" placeholder="youremail@email.com" clearInput [(ngModel)]="username">
+                  <ion-icon name="contact" class="ion-margin-end"></ion-icon>
+              </ion-input>
+          </ion-item>
+          <ion-item class="ion-margin-bottom">
+              <ion-label position="stacked">Password</ion-label>
+              <ion-input type="password" placeholder="yourpassword" clearInput [(ngModel)]="password">
+                  <ion-icon name="unlock" class="ion-margin-end"></ion-icon>
+              </ion-input>
+          </ion-item>
+          <ion-button shape="round" expand="full" (click)="login()">Login</ion-button>
+          <ion-item lines="none" class="ion-no-margin">
+              <a (click)="forgotPassword()">Forgot Password</a>
+          </ion-item>
+          <ion-item lines="none" class="ion-no-margin">
+              <a (click)="signUp()">Sign Up</a>
+          </ion-item>
+      </ion-card-content>
+  </ion-card>
+
+
+  <ion-button  expand="full" class="ion-padding" (click)="loginFB()">
+      <ion-icon name="logo-facebook" slot="start"></ion-icon>
+      Login using Facebook
+  </ion-button>
+</ion-content>

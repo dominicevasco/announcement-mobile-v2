@@ -1,0 +1,64 @@
+<ion-header>
+  <ion-toolbar color="secondary">
+    <ion-item color="secondary">
+      <ion-label>
+        <h1><b>People</b></h1>
+      </ion-label>
+    </ion-item>
+    <ion-searchbar (ionChange)='startSearch($event)'>
+    </ion-searchbar>
+  </ion-toolbar>
+  <ion-toolbar *ngIf='!isSearch && isAdmin'>
+    <ion-segment (ionChange)="segmentChanged($event)">
+      <ion-segment-button value="APPROVED" checked>
+        <ion-icon name="people"></ion-icon>
+      </ion-segment-button>
+      <ion-segment-button value="DECLINED">
+        <ion-icon name="remove-circle"></ion-icon>
+      </ion-segment-button>
+      <ion-segment-button value="PENDING">
+        <ion-icon name="person-add"></ion-icon>
+      </ion-segment-button>
+    </ion-segment>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content fullscreen>
+  <!-- add user -->
+  <ion-item  *ngIf="isAdd && isAdmin">
+    <ion-input placeholder="email@address.com" clearInput inputmode="email" [(ngModel)]="userEmail"></ion-input>
+    <ion-button (click)="addUserPending()">Add User</ion-button>
+  </ion-item>
+  <!-- User list -->
+  <ion-list *ngFor="let user of users">
+    <ion-item-sliding id="item100">
+      <!-- item -->
+      <ion-item>
+        <ion-avatar slot="start" *ngIf="type !== 'PENDING'">
+          <img src="data:image/jpeg;base64,{{user.profile}}" />
+        </ion-avatar>
+        <ion-label>
+          <h2 *ngIf="type !== 'PENDING'">{{user.lastname}},{{user.firstname}} {{user.middlename}}</h2>
+          <p>{{user.email}}</p>
+        </ion-label>
+        <ion-button *ngIf="type === 'PENDING'" (click)="removeUnverified(user.id)">Delete</ion-button>
+      </ion-item>
+
+      <!-- item options -->
+      <ion-item-options side="end" *ngIf="isAdmin && type !== 'PENDING'">
+        <ion-item-option color="warning">
+          <ion-icon slot="icon-only" name="trash" (click)="changeUserStatus(user.id,'DECLINED')"
+            *ngIf='isInactiveButtonDisplay'></ion-icon>
+          <ion-icon slot="icon-only" name="thumbs-up" (click)='changeUserStatus(user.id)'
+            *ngIf='!isInactiveButtonDisplay'></ion-icon>
+        </ion-item-option>
+        <ion-item-option *ngIf="isInactiveButtonDisplay">
+          <ion-icon slot="icon-only" name="key" (click)="changeRole(user.id,'ADMIN')" *ngIf="user.userType=='USER'">
+          </ion-icon>
+          <ion-icon slot="icon-only" name="contact" (click)='changeRole(user.id)' *ngIf="user.userType=='ADMIN'">
+          </ion-icon>
+        </ion-item-option>
+      </ion-item-options>
+    </ion-item-sliding>
+  </ion-list>
+</ion-content>
