@@ -1,0 +1,56 @@
+<ion-header>
+  <ion-toolbar color="secondary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{title}}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)='submit()'>
+        Post
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+
+  <!-- other menu -->
+  <ion-toolbar>
+    <ion-item slot="start" lines="none">
+      <ion-label>Public</ion-label>
+      <ion-toggle [(ngModel)]="isPublic"></ion-toggle>
+    </ion-item>
+
+    <ion-buttons slot="end">
+      <ion-button (click)="selectImage()">
+        <ion-icon slot="icon-only" name="image"></ion-icon>
+      </ion-button>
+      <ion-button (click)="selectVideo()">
+        <ion-icon slot="icon-only" name="videocam"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-content>
+    <ion-card>
+      <!-- auther details -->
+      <ion-item>
+        <ion-avatar class="ion-margin-end">
+          <img src='{{profileImage}}' />
+        </ion-avatar>
+        <ion-label>
+          <h3>{{fullname}}</h3>
+          <p>{{postDate}}</p>
+        </ion-label>
+      </ion-item>
+
+      <ion-card-content>
+        <ion-textarea rows="4" cols="20" placeholder="Write something..." [(ngModel)]="message"></ion-textarea>
+      </ion-card-content>
+
+      <div *ngIf='null!==toggleImage && undefined!==toggleImage'>
+        <img src='{{toggleImage}}' />
+      </div>
+
+    </ion-card>
+  </ion-content>
+</ion-content>

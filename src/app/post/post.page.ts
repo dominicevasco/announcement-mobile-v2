@@ -3,6 +3,8 @@ import { LoadingController } from '@ionic/angular';
 import { Post } from 'src/model/post';
 import { ApiService } from 'src/services/api.service';
 import Utils from 'src/services/message.util';
+import { Router } from '@angular/router';
+import SessionStoreService from 'src/services/session.service';
 
 @Component({
   selector: 'app-post',
@@ -16,16 +18,26 @@ export class PostPage implements OnInit {
   posts: any = []
 
   constructor(private loadingController: LoadingController,
-    private apiService: ApiService, private util: Utils) { }
+    private apiService: ApiService, private util: Utils,
+    private router: Router, private sessionStorage: SessionStoreService) { }
 
   ngOnInit() {
-    this._loadAnnouncement();
+    this.sessionStorage.getUserData().then(data => {
+      this.profile = data.photo;
+    })
+    this.loadAnnouncement();
   }
 
   /**
+   * Method to display write post
+   */
+  writePost = () => {
+    this.router.navigate(['post-ae/', 'add', -1])
+  }
+  /**
    * Method to display posts
    */
-  _loadAnnouncement = async () => {
+  loadAnnouncement = async () => {
     const loader = await this.loadingController.create({
       message: 'Please wait...'
     });

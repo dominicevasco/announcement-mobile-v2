@@ -8,6 +8,20 @@
       <p>{{name}}</p>
     </ion-label>
   </ion-toolbar>
+
+  <!-- post menus -->
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="loadAnnouncement()">
+        <ion-icon slot="icon-only" name="card"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-buttons slot="end">
+      <ion-button (click)="writePost()">
+        <ion-icon slot="icon-only" name="paper"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
 </ion-header>
 
 <ion-content>

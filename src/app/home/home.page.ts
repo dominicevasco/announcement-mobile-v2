@@ -10,7 +10,8 @@ import { Router } from '@angular/router';
 })
 export class HomePage implements OnInit {
 
-  constructor(private sessionStorage: SessionStoreService, private loader: LoadingController,
+  constructor(private sessionStorage: SessionStoreService, 
+    private loader: LoadingController,
     private router: Router) { }
 
   async logout() {
@@ -28,6 +29,7 @@ export class HomePage implements OnInit {
   }
 
   ngOnInit() {
+    
   }
 
 }

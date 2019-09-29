@@ -13,7 +13,7 @@ export default class SessionStoreService {
 
     private checkPhoto(profile: any) {
         if (null === profile || undefined === profile) {
-            return null;
+            return '../../assets/profile.svg';
         }
         return profile;
     }
