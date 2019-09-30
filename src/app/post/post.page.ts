@@ -56,9 +56,13 @@ export class PostPage implements OnInit {
           post.id = item.id;
           post.content = item.message;
           post.dateAdded = item.dateAdded;
-          post.fileData = 'data:image/jpeg;base64,' + item.file64;
+
           post.author = item.user['lastname'] + "," + item.user['firstname']
           post.authorPic = 'data:image/jpeg;base64,' + item.user['profile'];
+
+          if ('null' !== item.file64) {
+            post.fileData = 'data:image/jpeg;base64,' + item.file64;
+          }
 
           this.posts.push(post);
         }, error => {
