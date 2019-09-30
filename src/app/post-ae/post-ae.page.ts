@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import SessionStoreService from 'src/services/session.service';
-import { LoadingController, ActionSheetController } from '@ionic/angular';
 import { Camera, CameraOptions } from '@ionic-native/Camera/ngx';
-import Utils from 'src/services/message.util';
+import { ActionSheetController, LoadingController } from '@ionic/angular';
 import { Post } from 'src/model/post';
 import { ApiService } from 'src/services/api.service';
+import Utils from 'src/services/message.util';
+import SessionStoreService from 'src/services/session.service';
 
 @Component({
   selector: 'app-post-ae',
@@ -116,18 +116,27 @@ export class PostAePage implements OnInit {
   /**
    * Submit announcement
    */
-  submit() {
-    let post = new Post();
-    post.id = this.id;
-    post.content = this.message;
-    post.fileData = this.base64Image;
-    post.author = this.authorId;
+  async submit() {
+    const postLoad = await this.loader.create({
+      message: 'Please wait..'
+    });
+    postLoad.present();
 
-    this.apiService.doPost('/post/add', post).then(data => {
-      this.util.showToastMessage('Post has been successfully submitted!', 'success');
-      this.routerLink.navigateByUrl("/home/post");
-    }, err => {
-      this.util.showToastMessage('Error : ' + err.error);
-    })
+    setTimeout(() => {
+      let post = new Post();
+      post.id = this.id;
+      post.content = this.message;
+      post.fileData = this.base64Image;
+      post.author = this.authorId;
+
+      this.apiService.doPost('/post/add', post).then(data => {
+        postLoad.dismiss();
+
+        this.util.showToastMessage('Post has been successfully submitted!', 'success');
+        this.routerLink.navigateByUrl("/home/post");
+      }, err => {
+        this.util.showToastMessage('Error : ' + err.error);
+      })
+    }, 1000);
   }
 }

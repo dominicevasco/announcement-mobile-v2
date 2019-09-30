@@ -32,9 +32,7 @@ export class PeoplePage implements OnInit {
     private actionSheet: ActionSheetController,
     private sessionStorage: SessionStoreService) {
 
-    this.sessionStorage.getUserData().then(data => {
-      console.log('current user ' + data);
-      
+    this.sessionStorage.getUserData().then(data => {      
       this.isAdmin = data.accessType === 'ADMIN';
     })
 
@@ -253,6 +251,7 @@ export class PeoplePage implements OnInit {
     });
     alert.present();
   }
+  
   ngOnInit() { this.loadUser(this.type); }
 
 }

@@ -23,7 +23,8 @@ export class PostPage implements OnInit {
 
   ngOnInit() {
     this.sessionStorage.getUserData().then(data => {
-      this.profile = data.photo;
+      this.profile = 'data:image/jpeg;base64,' + data.photo;
+      console.log(this.profile);
     })
     this.loadAnnouncement();
   }
@@ -45,7 +46,7 @@ export class PostPage implements OnInit {
 
     setTimeout(() => {
       //call post from the backend
-      this.apiService.doGet('/post/all', {}).then((data) => {
+      this.apiService.doGet('/post/all/approved', {}).then((data) => {
         //split because array in string format
         const splitArr: [] = JSON.parse(data.data);
         this.posts = [];

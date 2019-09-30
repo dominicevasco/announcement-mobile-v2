@@ -67,7 +67,10 @@ export abstract class LoginAbstract {
      * @param username 
      * @param password 
      */
-    async signUp(username, password, type): Promise<any> {
+    async signUp(user: User, type): Promise<any> {
+        const username = user.username;
+        const password = user.password;
+
         const result = new Promise(async (resolve, reject) => {
             const load = await this.loader.create({
                 message: 'Please wait...'
@@ -80,11 +83,8 @@ export abstract class LoginAbstract {
                     'type': type
                 }).then(data => {
                     if (data.status === 202) {
-                        const dataEmail = new User();
-                        dataEmail.email = username;
-                        // dataEmail.fname
                         //save to db
-                        this.saveAccountCopy(dataEmail, type).then(status => {
+                        this.saveAccountCopy(user, type).then(status => {
                             //save to firebase,
                             this.register(username, password).then(res => {
                                 resolve();

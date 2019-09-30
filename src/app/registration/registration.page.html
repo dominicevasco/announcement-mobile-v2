@@ -9,22 +9,57 @@
 
 <ion-content class="ion-padding">
   <ion-list>
+    <ion-item-group>
+      <ion-item lines="none">
+        <ion-avatar style="margin:auto;height:100px;width:100px;" >
+          <img src='{{image}}' *ngIf="null!==image"/>
+          <img src = '../../assets/profile.svg' *ngIf="null===image" />
+        </ion-avatar>
+      </ion-item>
+      <ion-button expand="full" (click)='browseImage()'>Browse Image</ion-button>
+    </ion-item-group>
 
-    <ion-item>
-      <ion-label position="floating">Username</ion-label>
-      <ion-input type="text" [(ngModel)]="username"></ion-input>
-    </ion-item>
+    <ion-item-group>
+      <ion-item-divider>
+        <ion-label>
+          Basic Info.
+        </ion-label>
+      </ion-item-divider>
+      <ion-item>
+        <ion-label position="stacked">Lastname</ion-label>
+        <ion-input type="text" [(ngModel)]="lastname"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="stacked">Firstname</ion-label>
+        <ion-input type="text" [(ngModel)]="firstname"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="stacked">Middlename</ion-label>
+        <ion-input type="text" [(ngModel)]="middlename"></ion-input>
+      </ion-item>
+    </ion-item-group>
+    <ion-item-group>
+      <ion-item-divider>
+        <ion-label>
+          Login Details
+        </ion-label>
+      </ion-item-divider>
 
-    <ion-item>
-      <ion-label position="floating">Password</ion-label>
-      <ion-input type="password" [(ngModel)]="password"></ion-input>
-    </ion-item>
+      <ion-item>
+        <ion-label position="stacked">Username</ion-label>
+        <ion-input type="text" [(ngModel)]="username"></ion-input>
+      </ion-item>
 
-    <ion-item>
-      <ion-label position="floating">Confirm Password</ion-label>
-      <ion-input type="password" [(ngModel)]="cpassword"></ion-input>
-    </ion-item>
+      <ion-item>
+        <ion-label position="stacked">Password</ion-label>
+        <ion-input type="password" [(ngModel)]="password"></ion-input>
+      </ion-item>
 
+      <ion-item>
+        <ion-label position="stacked">Confirm Password</ion-label>
+        <ion-input type="password" [(ngModel)]="cpassword"></ion-input>
+      </ion-item>
+    </ion-item-group>
   </ion-list>
 
   <ion-button fill="solid" expand="block" color="dark" (click)="register()">Signup</ion-button>

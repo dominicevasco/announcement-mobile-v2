@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import SessionStoreService from 'src/services/session.service';
 import { LoadingController } from '@ionic/angular';
 import { Router } from '@angular/router';
+import { ApiService } from 'src/services/api.service';
 
 @Component({
   selector: 'app-home',
@@ -10,9 +11,18 @@ import { Router } from '@angular/router';
 })
 export class HomePage implements OnInit {
 
-  constructor(private sessionStorage: SessionStoreService, 
+  isAdmin: boolean = false;
+
+  notificationNumber: number;
+
+  constructor(private sessionStorage: SessionStoreService,
     private loader: LoadingController,
-    private router: Router) { }
+    private router: Router, private apiService: ApiService) {
+
+    this.sessionStorage.getUserData().then(data => {
+      this.isAdmin = data.accessType === 'ADMIN';
+    })
+  }
 
   async logout() {
     const l = await this.loader.create({
@@ -29,7 +39,15 @@ export class HomePage implements OnInit {
   }
 
   ngOnInit() {
-    
+    this.loadNotificationNumber();
+  }
+
+  loadNotificationNumber() {
+    //select all posts which status is pending.
+    this.apiService.doGet("/post/all/pending", {}).then(data => {
+      const posts: [] = JSON.parse(data.data);
+      this.notificationNumber = posts.length;
+    });
   }
 
 }
