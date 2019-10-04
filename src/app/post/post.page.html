@@ -12,7 +12,7 @@
   <!-- post menus -->
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-button (click)="loadAnnouncement()">
+      <ion-button (click)="refreshAnnouncment()">
         <ion-icon slot="icon-only" name="card"></ion-icon>
       </ion-button>
     </ion-buttons>
@@ -41,4 +41,10 @@
     <ion-card-content>{{post._content}}</ion-card-content>
     <img src="{{post._fileData}}" />
   </ion-card>
+
+  <!-- infinte scroll area -->
+  <ion-infinite-scroll threshold="100px" (ionInfinite)="loadData($event)">
+    <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="Pulling previous announcement...">
+    </ion-infinite-scroll-content>
+  </ion-infinite-scroll>
 </ion-content>

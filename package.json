@@ -1,7 +1,7 @@
 {
   "name": "school-media",
   "version": "0.0.1",
-  "author": "Ionic Framework",
+  "author": "Dream Team",
   "homepage": "https://ionicframework.com/",
   "scripts": {
     "ng": "ng",
@@ -33,8 +33,6 @@
     "@ionic-native/status-bar": "^5.0.0",
     "@ionic/angular": "^4.7.1",
     "brower": "0.0.2",
-    "cordova-android": "^8.1.0",
-    "cordova-browser": "^6.0.0",
     "cordova-plugin-advanced-http": "^2.1.1",
     "cordova-plugin-background-mode": "^0.7.3",
     "cordova-plugin-camera": "^4.1.0",
@@ -80,7 +78,7 @@
     "tslint": "~5.15.0",
     "typescript": "~3.4.3"
   },
-  "description": "An Ionic project",
+  "description": "An announcement project",
   "cordova": {
     "plugins": {
       "cordova-plugin-filepath": {},
@@ -108,9 +106,6 @@
       },
       "cordova-plugin-background-mode": {}
     },
-    "platforms": [
-      "android",
-      "browser"
-    ]
+    "platforms": []
   }
 }

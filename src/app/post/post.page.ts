@@ -1,9 +1,9 @@
-import { Component, OnInit } from '@angular/core';
-import { LoadingController } from '@ionic/angular';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { Router } from '@angular/router';
+import { IonInfiniteScroll, LoadingController, IonContent } from '@ionic/angular';
 import { Post } from 'src/model/post';
 import { ApiService } from 'src/services/api.service';
 import Utils from 'src/services/message.util';
-import { Router } from '@angular/router';
 import SessionStoreService from 'src/services/session.service';
 
 @Component({
@@ -17,16 +17,46 @@ export class PostPage implements OnInit {
   name: any;
   posts: any = []
 
+  pageNumber: any = 0;
+
+  @ViewChild(IonInfiniteScroll, { static: false }) infiniteScroll: IonInfiniteScroll;
+  @ViewChild(IonContent, { static: false }) content: IonContent;
+
   constructor(private loadingController: LoadingController,
     private apiService: ApiService, private util: Utils,
     private router: Router, private sessionStorage: SessionStoreService) { }
 
-  ngOnInit() {
-    this.sessionStorage.getUserData().then(data => {
-      this.profile = 'data:image/jpeg;base64,' + data.photo;
-      console.log(this.profile);
-    })
-    this.loadAnnouncement();
+  /**
+   * If scroll down reached the end.
+   * 
+   * @param event 
+   */
+  loadData(event) {
+    setTimeout(() => {
+      const totalData = this.loadAnnouncement(false);
+      event.target.complete();
+      console.log('returned data ' + totalData);
+    }, 2000);
+  }
+
+  /**
+   * On page load
+   */
+  async ngOnInit() {
+    const loader = await this.loadingController.create({
+      message: 'Please wait...'
+    });
+
+    loader.present();
+
+    setTimeout(() => {
+      this.sessionStorage.getUserData().then(data => {
+        this.profile = 'data:image/jpeg;base64,' + data.photo;
+        console.log(this.profile);
+      })
+      this.loadAnnouncement();
+      loader.dismiss();
+    }, 2000);
   }
 
   /**
@@ -38,41 +68,65 @@ export class PostPage implements OnInit {
   /**
    * Method to display posts
    */
-  loadAnnouncement = async () => {
-    const loader = await this.loadingController.create({
-      message: 'Please wait...'
-    });
-    loader.present();
+  loadAnnouncement = (isNewSetData: boolean = true): number => {
+    if (isNewSetData) this.pageNumber = 0;//reset page number
+    //call post from the backend
+    this.apiService.doGet(`/post/all/approved/${this.pageNumber}`, {}).then((data) => {
+      //split because array in string format
+      const splitArr: [] = JSON.parse(data.data);
 
-    setTimeout(() => {
-      //call post from the backend
-      this.apiService.doGet('/post/all/approved', {}).then((data) => {
-        //split because array in string format
-        const splitArr: [] = JSON.parse(data.data);
-        this.posts = [];
+      if (isNewSetData) this.posts = [];
 
-        splitArr.forEach((item: any, index) => {
-          let post = new Post();
-          post.id = item.id;
-          post.content = item.message;
-          post.dateAdded = item.dateAdded;
+      console.log('Total records retrieved : ' + splitArr.length);
 
-          post.author = item.user['lastname'] + "," + item.user['firstname']
-          post.authorPic = 'data:image/jpeg;base64,' + item.user['profile'];
+      splitArr.forEach((item: any, index) => {
+        let post = new Post();
+        post.id = item.id;
+        post.content = item.message;
+        post.dateAdded = item.dateAdded;
 
-          if ('null' !== item.file64) {
-            post.fileData = 'data:image/jpeg;base64,' + item.file64;
-          }
+        post.author = item.user['lastname'] + "," + item.user['firstname']
+        post.authorPic = 'data:image/jpeg;base64,' + item.user['profile'];
 
-          this.posts.push(post);
-        }, error => {
-          this.util.showToastMessage(error.error, 'danger', 3000);
-        })
-      }).finally(() => {
-        loader.dismiss();
+        if ('null' !== item.file64) {
+          post.fileData = 'data:image/jpeg;base64,' + item.file64;
+        }
+
+        this.posts.push(post);
       });
-    }, 1000);
 
+      //increment page number
+      this.pageNumber += 1;
+      console.log('Page number ' + this.pageNumber);
+
+      return splitArr.length;
+    }, error => {
+      this.util.showToastMessage(error.error, 'danger', 3000);
+    })
+
+    return 0;
+  }
+
+
+  /**
+   * On clicking the refresh button UI
+   */
+  refreshAnnouncment() {
+    this.content.scrollToTop(1000).then(async () => {
+      const loader = await this.loadingController.create({
+        message: 'Please wait...'
+      });
+
+      loader.present();
+      setTimeout(() => {
+
+        this.loadAnnouncement();
+        loader.dismiss();
+      }, 1000);
+
+      console.log('status ' + this.infiniteScroll.disabled);
+      this.infiniteScroll.disabled = false;
+    });
 
   }
 
