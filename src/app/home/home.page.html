@@ -10,12 +10,15 @@
       <ion-icon name="home"></ion-icon>
       <ion-text>Home</ion-text>
     </ion-tab-button>
+    <ion-tab-button tab="broadcast">
+      <ion-icon name="tv"></ion-icon>
+      <ion-text>Broadcast</ion-text>
+    </ion-tab-button>
     <ion-tab-button tab="people">
       <ion-icon name="contacts"></ion-icon>
       <ion-text>People</ion-text>
     </ion-tab-button>
     <ion-tab-button tab="notification">
-      <ion-badge color="danger" *ngIf="notificationNumber > 0 && isAdmin">{{notificationNumber}}</ion-badge>
       <ion-icon name="notifications"></ion-icon>
       <ion-text>Notification</ion-text>
     </ion-tab-button>

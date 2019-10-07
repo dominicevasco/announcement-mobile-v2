@@ -88,8 +88,15 @@ export class PostPage implements OnInit {
         post.author = item.user['lastname'] + "," + item.user['firstname']
         post.authorPic = 'data:image/jpeg;base64,' + item.user['profile'];
 
+        post.type = item.type;
+
+
         if ('null' !== item.file64) {
-          post.fileData = 'data:image/jpeg;base64,' + item.file64;
+          if (item.type === 'IMAGE') {
+            post.fileData = 'data:image/jpeg;base64,' + item.file64;
+          } else if (item.type === 'VIDEO') {
+            post.fileData = 'data:video/mp4;base64,' + item.file64;
+          }
         }
 
         this.posts.push(post);

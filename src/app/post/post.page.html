@@ -39,7 +39,11 @@
     </ion-item>
 
     <ion-card-content>{{post._content}}</ion-card-content>
-    <img src="{{post._fileData}}" />
+    <img src="{{post._fileData}}" *ngIf="post._type === 'IMAGE'" />
+
+    <video controls width="100%" *ngIf="post._type === 'VIDEO'">
+      <source type="video/mp4" [src]="post._fileData" />
+    </video>
   </ion-card>
 
   <!-- infinte scroll area -->

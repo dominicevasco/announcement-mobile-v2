@@ -6,6 +6,7 @@ export class Post {
     private _fileData: any;
     private _authorPic: any;
     private _status: any;
+    private _type : any;
 
     public get id(): number {
         return this._id;
@@ -13,6 +14,14 @@ export class Post {
 
     public set id(id: number) {
         this._id = id;
+    }
+
+    public get type(): any {
+        return this._type;
+    }
+
+    public set type(type: any) {
+        this._type = type;
     }
 
     public get status(): any {

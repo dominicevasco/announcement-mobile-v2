@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Camera, CameraOptions } from '@ionic-native/Camera/ngx';
-import { ActionSheetController, LoadingController } from '@ionic/angular';
+import { LoadingController } from '@ionic/angular';
 import { Post } from 'src/model/post';
 import { ApiService } from 'src/services/api.service';
 import Utils from 'src/services/message.util';
+import ImagePostService from 'src/services/post/imagePostService';
 import SessionStoreService from 'src/services/session.service';
+import VideoPostService from 'src/services/post/videoPostService';
 
 @Component({
   selector: 'app-post-ae',
@@ -24,18 +25,23 @@ export class PostAePage implements OnInit {
   profileImage: any;
 
   toggleImage: any = null;
-  base64Image: any = null;
+
+  base64: any = null;
   message: any = null;
+  type: any = null;
 
   constructor(private router: ActivatedRoute,
     private routerLink: Router,
     private sessionService: SessionStoreService,
     private loader: LoadingController,
-    private actionSheet: ActionSheetController,
-    private camera: Camera,
     private util: Utils,
-    private apiService: ApiService) { }
+    private apiService: ApiService,
+    private imagePostService: ImagePostService,
+    private videoPostService: VideoPostService) { }
 
+  /**
+   * Page on load.
+   */
   ngOnInit() {
     this.router.paramMap.subscribe(params => {
       const state = params.get('state');
@@ -58,59 +64,26 @@ export class PostAePage implements OnInit {
   /**
    * Method to select image
    */
-  async selectImage() {
-    const selector = await this.actionSheet.create({
-      header: 'Select Image Source',
-      buttons: [
-        {
-          text: 'Load from Library',
-          handler: () => {
-            this.pickImage(this.camera.PictureSourceType.PHOTOLIBRARY);
-          }
-        },
-        {
-          text: 'Use Camera',
-          handler: () => {
-            this.pickImage(this.camera.PictureSourceType.CAMERA);
-          }
-        },
-        {
-          text: 'Cancel',
-          role: 'cancel'
-        }
-      ]
-    });
-
-    selector.present();
+  selectImage() {
+    this.imagePostService.selectImage().then(imageData => {
+      this.type = 'IMAGE';
+      this.toggleImage = 'data:image/jpeg;base64,' + imageData;
+      this.base64 = imageData;
+    }, err => {
+      this.util.showToastMessage('Error : ' + err.error);
+    })
   }
 
   /**
    * method to select video
    */
   selectVideo() {
-
-  }
-
-  /**
-   * Method to get the image from the selected
-   * source type.
-   * 
-   * @param sourceType 
-   */
-  pickImage(sourceType): any {
-    const options: CameraOptions = {
-      quality: 100,
-      sourceType: sourceType,
-      destinationType: this.camera.DestinationType.DATA_URL,
-      encodingType: this.camera.EncodingType.JPEG,
-      mediaType: this.camera.MediaType.PICTURE
-    }
-    this.camera.getPicture(options).then((imageData) => {
-      this.toggleImage = 'data:image/jpeg;base64,' + imageData;
-      this.base64Image = imageData;
-    }, (err) => {
-      this.util.showToastMessage('Error : ' + err.error);
-    });
+    this.videoPostService.selectVideo().then(videoData => {
+      this.type = 'VIDEO';
+      this.base64 = videoData;
+    }, err => {
+      this.util.showToastMessage('Error : ' + err);
+    })
   }
 
   /**
@@ -126,14 +99,16 @@ export class PostAePage implements OnInit {
       let post = new Post();
       post.id = this.id;
       post.content = this.message;
-      post.fileData = this.base64Image;
+      post.fileData = this.base64;
       post.author = this.authorId;
+      post.type = this.type;
 
       this.apiService.doPost('/post/add', post).then(data => {
         postLoad.dismiss();
 
         this.util.showToastMessage('Post has been successfully submitted!', 'success');
         this.routerLink.navigateByUrl("/home/post");
+        console.log('good');
       }, err => {
         this.util.showToastMessage('Error : ' + err.error);
       })
