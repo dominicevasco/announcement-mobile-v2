@@ -20,42 +20,34 @@ export abstract class LoginAbstract {
      */
     async signIn(username, password, type = 'system'): Promise<any> {
         const result = new Promise(async (resolve, reject) => {
-            const t = await this.loader.create({
-                message: 'Please wait...'
-            });
-            t.present();
-
-            setTimeout(() => {
-                //login via firebase
-                this.login(username, password).then(res => {
-                    //validate for user access and retrieve credentials
-                    this.apiService.doPost('/user/find', {
-                        'email': username
-                    }).then((data) => {
-                        //store session
-                        let pData = JSON.parse(data.data);
-                        if (pData.status === 'APPROVED') {
-                            this.sessionStore.storeUserData(pData).then(() => {
-                                let x = this.sessionStore.getUserData();
-                                console.log(x);
-                                resolve();
-                            }, err => {
-                                reject(err);
-                            });
-                        } else {
-                            this.util.showToastMessage('Not allowed to access the system');
-                        }
-                    }, err => {
-                        console.log(err);
-                        this.util.showToastMessage(err.error);
-                        reject(err)
-                    })
+            //login via firebase
+            this.login(username, password).then(res => {
+                //validate for user access and retrieve credentials
+                this.apiService.doPost('/user/find', {
+                    'email': username
+                }).then((data) => {
+                    //store session
+                    let pData = JSON.parse(data.data);
+                    if (pData.status === 'APPROVED') {
+                        this.sessionStore.storeUserData(pData).then(() => {
+                            let x = this.sessionStore.getUserData();
+                            console.log(x);
+                            resolve();
+                        }, err => {
+                            reject(err);
+                        });
+                    } else {
+                        this.util.showToastMessage('Not allowed to access the system');
+                    }
                 }, err => {
                     console.log(err);
-                    this.util.showToastMessage(err.message);
+                    this.util.showToastMessage(err.error);
+                    reject(err)
                 })
-                t.dismiss();
-            }, 3000);
+            }, err => {
+                console.log(err);
+                this.util.showToastMessage(err.message);
+            })
         })
         return result;
     }

@@ -1,0 +1,58 @@
+<ion-header>
+  <ion-toolbar color="secondary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>
+      <b>Broadcast</b>
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-list>
+    <ion-item-group>
+      <ion-item-divider>
+        <ion-label>Start Details</ion-label>
+      </ion-item-divider>
+      <ion-item>
+        <ion-label>Date</ion-label>
+        <ion-datetime display-format="DD MMM YYYY" [(ngModel)]="sDate"></ion-datetime>
+      </ion-item>
+      <ion-item>
+        <ion-label>Time</ion-label>
+        <ion-datetime display-format="HH:mm" [(ngModel)]="sTime"></ion-datetime>
+      </ion-item>
+    </ion-item-group>
+
+    <!-- valid until -->
+    <ion-item-group>
+      <ion-item-divider>
+        <ion-label>Validity Details</ion-label>
+      </ion-item-divider>
+      <ion-item>
+        <ion-label>Date</ion-label>
+        <ion-datetime display-format="DD MMM YYYY" [(ngModel)]="eDate"></ion-datetime>
+      </ion-item>
+      <ion-item>
+        <ion-label>Time</ion-label>
+        <ion-datetime display-format="HH:mm" [(ngModel)]="eTime"></ion-datetime>
+      </ion-item>
+    </ion-item-group>
+
+    <!-- note -->
+    <ion-item-group>
+      <ion-item-divider>
+        <ion-label>Note (<i>if any</i>)</ion-label>
+      </ion-item-divider>
+      <ion-item>
+        <ion-textarea rows="6" cols="20" placeholder="Enter any notes here..." [(ngModel)]="note"></ion-textarea>
+      </ion-item>
+    </ion-item-group>
+  </ion-list>
+
+  <ion-button expand="full" class="ion-margin-start ion-margin-end" (click)="submit()">
+    <ion-icon slot="start" name="save"></ion-icon>
+    Save
+  </ion-button>
+</ion-content>

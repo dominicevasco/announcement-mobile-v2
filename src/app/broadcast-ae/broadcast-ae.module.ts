@@ -5,12 +5,12 @@ import { Routes, RouterModule } from '@angular/router';
 
 import { IonicModule } from '@ionic/angular';
 
-import { BroadcastPage } from './broadcast.page';
+import { BroadcastAePage } from './broadcast-ae.page';
 
 const routes: Routes = [
   {
     path: '',
-    component: BroadcastPage
+    component: BroadcastAePage
   }
 ];
 
@@ -21,8 +21,6 @@ const routes: Routes = [
     IonicModule,
     RouterModule.forChild(routes)
   ],
-  entryComponents: [BroadcastPage],
-  declarations: [BroadcastPage],
-  exports: [BroadcastPage]
+  declarations: [BroadcastAePage]
 })
-export class BroadcastPageModule { }
+export class BroadcastAePageModule {}

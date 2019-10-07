@@ -96,22 +96,26 @@ export class PostAePage implements OnInit {
     postLoad.present();
 
     setTimeout(() => {
-      let post = new Post();
-      post.id = this.id;
-      post.content = this.message;
-      post.fileData = this.base64;
-      post.author = this.authorId;
-      post.type = this.type;
+      //validate first
+      if (null !== this.message || null !== this.base64) {
+        let post = new Post();
+        post.id = this.id;
+        post.content = this.message;
+        post.fileData = this.base64;
+        post.author = this.authorId;
+        post.type = this.type;
 
-      this.apiService.doPost('/post/add', post).then(data => {
-        postLoad.dismiss();
-
-        this.util.showToastMessage('Post has been successfully submitted!', 'success');
-        this.routerLink.navigateByUrl("/home/post");
-        console.log('good');
-      }, err => {
-        this.util.showToastMessage('Error : ' + err.error);
-      })
+        this.apiService.doPost('/post/add', post).then(data => {
+          this.util.showToastMessage('Post has been successfully submitted!', 'success');
+          this.routerLink.navigateByUrl("/home/post");
+        }, err => {
+          this.util.showToastMessage('Error : ' + err.error);
+        }).finally(() => {
+          postLoad.dismiss();
+        })
+      } else {
+        this.util.showToastMessage('Please enter content before submitting..');
+      }
     }, 1000);
   }
 }

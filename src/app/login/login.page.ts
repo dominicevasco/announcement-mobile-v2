@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { ActionSheetController } from '@ionic/angular';
+import { ActionSheetController, LoadingController } from '@ionic/angular';
 import DefaultAccountService from 'src/services/_login/default.service';
 import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 
@@ -14,7 +14,9 @@ export class LoginPage implements OnInit {
   username: string;
   password: string;
 
-  constructor(private router: Router, private actionSheet: ActionSheetController, private defaultLogin: DefaultAccountService) { }
+  constructor(private router: Router, private actionSheet: ActionSheetController,
+    private loader: LoadingController,
+    private defaultLogin: DefaultAccountService) { }
 
   /**
    * Method to display registration options.
@@ -50,10 +52,17 @@ export class LoginPage implements OnInit {
    * Method to login using email and password.
    * 
    */
-  login = () => {
-    this.defaultLogin.signIn(this.username, this.password).then(() => {
-      this.router.navigateByUrl("home");
-    })
+  login = async () => {
+    const l = await this.loader.create({
+      message: 'Please wait...'
+    });
+    l.present()
+    setTimeout(() => {
+      this.defaultLogin.signIn(this.username, this.password).then(() => {
+        this.router.navigateByUrl("home");
+        l.dismiss();
+      })
+    }, 1000);
   }
 
   ngOnInit() { }

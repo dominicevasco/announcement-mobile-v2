@@ -10,14 +10,6 @@ export default class SessionStoreService {
 
     constructor(private session: NativeStorage) { }
 
-
-    private checkPhoto(profile: any) {
-        if (null === profile || undefined === profile) {
-            return '../../assets/profile.svg';
-        }
-        return profile;
-    }
-
     private checkAccess(type) {
         if (null === type || undefined === type) {
             return 'USER'
@@ -39,7 +31,7 @@ export default class SessionStoreService {
                     'id': user.id,
                     'fullname': user.lastname + ',' + user.firstname + ' ' + user.middlename,
                     'email': user.email,
-                    'photo': this.checkPhoto(user.profile),
+                    'photo': user.profile,
                     'accessType': this.checkAccess(user.userType)
                 }
             ).then(() => {

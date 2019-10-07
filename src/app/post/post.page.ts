@@ -1,10 +1,13 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { IonInfiniteScroll, LoadingController, IonContent } from '@ionic/angular';
+import { IonInfiniteScroll, LoadingController, IonContent, ActionSheetController, ModalController } from '@ionic/angular';
 import { Post } from 'src/model/post';
 import { ApiService } from 'src/services/api.service';
 import Utils from 'src/services/message.util';
 import SessionStoreService from 'src/services/session.service';
+import { ActionSheetButton } from '@ionic/core';
+import { BroadcastPage } from '../broadcast/broadcast.page';
+import { BroadcastPageModule } from '../broadcast/broadcast.module';
 
 @Component({
   selector: 'app-post',
@@ -24,7 +27,8 @@ export class PostPage implements OnInit {
 
   constructor(private loadingController: LoadingController,
     private apiService: ApiService, private util: Utils,
-    private router: Router, private sessionStorage: SessionStoreService) { }
+    private router: Router, private sessionStorage: SessionStoreService, 
+    private actionSheet: ActionSheetController) { }
 
   /**
    * If scroll down reached the end.
@@ -51,8 +55,7 @@ export class PostPage implements OnInit {
 
     setTimeout(() => {
       this.sessionStorage.getUserData().then(data => {
-        this.profile = 'data:image/jpeg;base64,' + data.photo;
-        console.log(this.profile);
+        this.profile = this.util.validateProfilePic(data.photo);
       })
       this.loadAnnouncement();
       loader.dismiss();
@@ -86,7 +89,7 @@ export class PostPage implements OnInit {
         post.dateAdded = item.dateAdded;
 
         post.author = item.user['lastname'] + "," + item.user['firstname']
-        post.authorPic = 'data:image/jpeg;base64,' + item.user['profile'];
+        post.authorPic = this.util.validateProfilePic(item.user['profile']);
 
         post.type = item.type;
 
@@ -114,7 +117,6 @@ export class PostPage implements OnInit {
     return 0;
   }
 
-
   /**
    * On clicking the refresh button UI
    */
@@ -137,4 +139,27 @@ export class PostPage implements OnInit {
 
   }
 
+  /**
+   * More action for this post.
+   * 
+   * @param id 
+   */
+  async moreAction(id) {
+    const actions = await this.actionSheet.create({
+      header: 'Options',
+      buttons: [
+        {
+          text: 'Add to Broadcast',
+          handler: () => {
+
+          }
+        }, {
+          text: 'Cancel',
+          role: 'cancel'
+        }
+      ]
+    });
+
+    actions.present();
+  }
 }

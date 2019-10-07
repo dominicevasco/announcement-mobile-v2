@@ -1,11 +1,13 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Routes, RouterModule } from '@angular/router';
-
+import { RouterModule, Routes } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
-
+import { BroadcastPageModule } from '../broadcast/broadcast.module';
 import { PostPage } from './post.page';
+import { BroadcastPage } from '../broadcast/broadcast.page';
+
+
 
 const routes: Routes = [
   {
@@ -23,4 +25,4 @@ const routes: Routes = [
   ],
   declarations: [PostPage]
 })
-export class PostPageModule {}
+export class PostPageModule { }
