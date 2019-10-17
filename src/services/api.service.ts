@@ -6,7 +6,7 @@ import { HTTP } from '@ionic-native/http/ngx';
 })
 export class ApiService {
 
-    url: string = 'http://192.168.1.38:8080';
+    url: string = 'http://192.168.1.44:8080';
     // url : string = 'https://announcement-server001.herokuapp.com'
     constructor(private nativeHttp: HTTP) {
     }

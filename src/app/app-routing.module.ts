@@ -9,6 +9,8 @@ const routes: Routes = [
   { path: 'registration', loadChildren: './registration/registration.module#RegistrationPageModule' },
   { path: 'post-ae/:state/:id', loadChildren: './post-ae/post-ae.module#PostAePageModule' },
   { path: 'broadcast-ae/:state/:id', loadChildren: './broadcast-ae/broadcast-ae.module#BroadcastAePageModule' },
+  { path: 'broadcast/:id', loadChildren: './broadcast/broadcast.module#BroadcastPageModule' },
+  { path: 'broadcast-post/:id', loadChildren: './broadcast-post/broadcast-post.module#BroadcastPostPageModule' },
 ];
 
 @NgModule({

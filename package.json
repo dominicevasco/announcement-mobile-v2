@@ -36,7 +36,7 @@
     "@ionic/angular": "^4.7.1",
     "brower": "0.0.2",
     "cordova-android": "8.1.0",
-    "cordova-browser": "6.0.0",
+    "cordova-browser": "^6.0.0",
     "cordova-plugin-advanced-http": "^2.1.1",
     "cordova-plugin-background-mode": "^0.7.3",
     "cordova-plugin-camera": "^4.1.0",
@@ -115,8 +115,8 @@
       "cordova-plugin-filechooser": {}
     },
     "platforms": [
-      "browser",
-      "android"
+      "android",
+      "browser"
     ]
   }
 }

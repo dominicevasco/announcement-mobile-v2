@@ -1,12 +1,6 @@
 <ion-header>
   <ion-toolbar color="secondary">
-    <ion-item color="secondary">
-      <ion-label>
-        <h1><b>People</b></h1>
-      </ion-label>
-    </ion-item>
-    <ion-searchbar (ionChange)='startSearch($event)'>
-    </ion-searchbar>
+    <ion-title>People</ion-title>
   </ion-toolbar>
   <ion-toolbar *ngIf='!isSearch && isAdmin'>
     <ion-segment (ionChange)="segmentChanged($event)">
@@ -25,7 +19,7 @@
 
 <ion-content fullscreen>
   <!-- add user -->
-  <ion-item  *ngIf="isAdd && isAdmin">
+  <ion-item *ngIf="isAdd && isAdmin">
     <ion-input placeholder="email@address.com" clearInput inputmode="email" [(ngModel)]="userEmail"></ion-input>
     <ion-button (click)="addUserPending()">Add User</ion-button>
   </ion-item>

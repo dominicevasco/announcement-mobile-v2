@@ -1,10 +1,14 @@
 <ion-header>
   <ion-toolbar color="secondary">
-    <ion-item lines="none" color="secondary">
-      <ion-label>
-        <h1><b>Broadcast</b></h1>
-      </ion-label>
-    </ion-item>
+    <ion-buttons slot="start" *ngIf="postId!=='display'">
+      <ion-back-button defaultHref="/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Broadcast</ion-title>
+    <ion-buttons slot="end" *ngIf="postId!=='display'">
+      <ion-button (click)="addBroadcastPost()">
+        Save
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 
   <ion-toolbar>
@@ -13,7 +17,7 @@
         <ion-icon slot="icon-only" name="card"></ion-icon>
       </ion-button>
     </ion-buttons>
-    <ion-buttons slot="end">
+    <ion-buttons slot="end" *ngIf="postId==='display'">
       <ion-button (click)="addBroadcast()">
         <ion-icon slot="icon-only" name="add"></ion-icon>
       </ion-button>
@@ -22,12 +26,18 @@
 </ion-header>
 
 <ion-content>
-  <ion-list>
-    <ion-item *ngFor="let broadcast of broadcasts">
+  <ion-list *ngFor="let broadcast of broadcasts">
+    <ion-item (click)="view(broadcast._id)">
       <ion-label>
-        <p>{{broadcast._startDate}}</p>
-        <p>{{broadcast._expDate}}</p>
+        <p><b>Start</b> : {{broadcast._startDate}}</p>
+        <p><b>End</b> : {{broadcast._expDate}}</p>
       </ion-label>
+      <ion-button fill="outline" slot="end" (click)='moreAction(broadcast._id)' *ngIf="postId==='display'">
+        <ion-icon name="cog"></ion-icon>
+      </ion-button>
+
+      <!-- if add broadcast -->
+      <ion-checkbox slot="end" *ngIf="postId!=='display'" (ionChange)="addCheckedToList($event,broadcast._id)"></ion-checkbox>
     </ion-item>
   </ion-list>
 </ion-content>

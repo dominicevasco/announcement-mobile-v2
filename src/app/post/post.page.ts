@@ -27,7 +27,7 @@ export class PostPage implements OnInit {
 
   constructor(private loadingController: LoadingController,
     private apiService: ApiService, private util: Utils,
-    private router: Router, private sessionStorage: SessionStoreService, 
+    private router: Router, private sessionStorage: SessionStoreService,
     private actionSheet: ActionSheetController) { }
 
   /**
@@ -151,7 +151,7 @@ export class PostPage implements OnInit {
         {
           text: 'Add to Broadcast',
           handler: () => {
-
+            this.router.navigate(['broadcast/', id])
           }
         }, {
           text: 'Cancel',

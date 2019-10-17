@@ -59,7 +59,7 @@ export class BroadcastAePage implements OnInit {
       this.apiService.doPost('/broadcast/create', broadcast).then(data => {
         if (data.status === 200) {
           this.util.showToastMessage('Broadcast topic created!', 'success');
-          this.nav.navigateByUrl('/home/broadcast');
+          this.nav.navigateByUrl('/home/broadcast/display');
         }
       }, err => {
         this.util.showToastMessage('Error : ' + err.error);

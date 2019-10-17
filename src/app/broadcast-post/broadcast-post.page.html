@@ -1,0 +1,27 @@
+<ion-header>
+  <ion-toolbar color="secondary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home/broadcast/display"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Broadcast post</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-list>
+    <ion-reorder-group (ionItemReorder)="doReorder($event)" disabled="false">
+      <ion-item *ngFor="let post of posts">
+        <ion-avatar class="ion-margin-end">
+          <img src='{{post._authorPic}}' />
+        </ion-avatar>
+        <ion-label>
+          <h3><b>{{post._author}}</b></h3>
+          <p>{{post._dateAdded}}</p>
+          <p>Content type : <b>{{post._type}}</b></p>
+        </ion-label>
+
+        <ion-reorder slot="end"></ion-reorder>
+      </ion-item>
+    </ion-reorder-group>
+  </ion-list>
+</ion-content>
