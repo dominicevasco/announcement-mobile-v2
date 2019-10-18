@@ -15,10 +15,10 @@ export class BroadcastAePage implements OnInit {
   id: any;
 
   sDate;
-  sTime;
 
   eDate;
-  eTime;
+
+  interval;
 
   note;
 
@@ -52,9 +52,10 @@ export class BroadcastAePage implements OnInit {
     setTimeout(() => {
       const broadcast = new Broadcast();
 
-      broadcast.startDate = this.formatDateTime(this.sDate, 0) + ' ' + this.formatDateTime(this.sTime, 1)
-      broadcast.expDate = this.formatDateTime(this.eDate, 0) + ' ' + this.formatDateTime(this.eTime, 1)
+      broadcast.startDate = this.sDate
+      broadcast.expDate = this.eDate
       broadcast.note = this.note;
+      broadcast.interval = this.interval;
 
       this.apiService.doPost('/broadcast/create', broadcast).then(data => {
         if (data.status === 200) {
@@ -67,9 +68,4 @@ export class BroadcastAePage implements OnInit {
       l.dismiss();
     }, 1000);
   }
-
-  formatDateTime(val, index) {
-    return val.split('T')[index];
-  }
-
 }

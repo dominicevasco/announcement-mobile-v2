@@ -4,7 +4,14 @@ export class Broadcast {
     private _expDate: any;
     private _posts: any[];
     private _note: string;
+    private _interval: any;
 
+    public get interval(): any {
+        return this._interval;
+    }
+    public set interval(interval: any) {
+        this._interval = interval;
+    }
 
     public get note(): string {
         return this._note;

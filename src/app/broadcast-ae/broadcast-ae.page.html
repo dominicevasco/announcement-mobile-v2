@@ -13,30 +13,32 @@
   <ion-list>
     <ion-item-group>
       <ion-item-divider>
-        <ion-label>Start Details</ion-label>
+        <ion-label>Start Date</ion-label>
       </ion-item-divider>
       <ion-item>
         <ion-label>Date</ion-label>
         <ion-datetime display-format="DD MMM YYYY" [(ngModel)]="sDate"></ion-datetime>
-      </ion-item>
-      <ion-item>
-        <ion-label>Time</ion-label>
-        <ion-datetime display-format="HH:mm" [(ngModel)]="sTime"></ion-datetime>
       </ion-item>
     </ion-item-group>
 
     <!-- valid until -->
     <ion-item-group>
       <ion-item-divider>
-        <ion-label>Validity Details</ion-label>
+        <ion-label>End Date</ion-label>
       </ion-item-divider>
       <ion-item>
         <ion-label>Date</ion-label>
         <ion-datetime display-format="DD MMM YYYY" [(ngModel)]="eDate"></ion-datetime>
       </ion-item>
+    </ion-item-group>
+
+    <!-- interval -->
+    <ion-item-group>
+      <ion-item-divider>
+        <ion-label>Duration (<i>for each announcement</i>)</ion-label>
+      </ion-item-divider>
       <ion-item>
-        <ion-label>Time</ion-label>
-        <ion-datetime display-format="HH:mm" [(ngModel)]="eTime"></ion-datetime>
+          <ion-input inputmode="decimal" [(ngModel)]="interval"></ion-input>
       </ion-item>
     </ion-item-group>
 

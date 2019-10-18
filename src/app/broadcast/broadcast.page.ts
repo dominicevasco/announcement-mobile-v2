@@ -34,8 +34,10 @@ export class BroadcastPage implements OnInit {
     })
   }
 
-  view(id) {
-    this.router.navigate(['broadcast-post', id]);
+  view(id,isView) {
+    if(isView){
+      this.router.navigate(['broadcast-post', id]);
+    }
   }
 
   addCheckedToList(event, bid) {

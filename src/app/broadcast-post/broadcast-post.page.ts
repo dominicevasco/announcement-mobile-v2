@@ -17,6 +17,8 @@ export class BroadcastPostPage implements OnInit {
   posts: any = []
   id;
 
+  orderOfId: any = [];
+
   constructor(private routerMap: ActivatedRoute, private api: ApiService, private util: Utils,
     private loader: LoadingController) { }
 
@@ -28,7 +30,36 @@ export class BroadcastPostPage implements OnInit {
   }
 
   doReorder(ev: any) {
+    console.log('order ' + this.orderOfId);
+
     console.log('Dragged from index', ev.detail.from, 'to', ev.detail.to);
+    const itemMove = this.orderOfId.splice(ev.detail.from, 1)[0];
+    this.orderOfId.splice(ev.detail.to, 0, itemMove);
+    ev.detail.complete();
+
+
+    console.log('order ' + this.orderOfId);
+  }
+
+  async updateOrder() {
+    const l = await this.loader.create({
+      message: 'Please wait...'
+    });
+    l.present();
+
+    setTimeout(() => {
+      this.api.doPost(`/broadcast/reorder/${this.id}`, {
+        orderPost: this.orderOfId.join()
+      }).then(data => {
+        if (data.status === 200) {
+          this.util.showToastMessage('Announcement has been reordered!', 'success');
+        }
+      }, err => {
+        this.util.showToastMessage('Error : ' + err.error);
+      }).finally(() => {
+        l.dismiss();
+      })
+    }, 1000);
   }
 
   async loadContent() {
@@ -53,6 +84,7 @@ export class BroadcastPostPage implements OnInit {
           post.type = item.type;
 
           this.posts.push(post);
+          this.orderOfId.push(post.id);
         })
 
         l.dismiss();

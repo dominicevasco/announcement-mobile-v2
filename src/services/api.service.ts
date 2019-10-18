@@ -1,14 +1,15 @@
 import { Injectable } from '@angular/core';
 import { HTTP } from '@ionic-native/http/ngx';
+import Utils from './message.util';
 
 @Injectable({
     providedIn: 'root'
 })
 export class ApiService {
 
-    // url: string = 'http://192.168.1.44:8080';
-    url : string = 'https://announcement-server001.herokuapp.com'
-    constructor(private nativeHttp: HTTP) {
+    url: string = 'http://192.168.1.44:8080';
+    // url : string = 'https://announcement-server001.herokuapp.com'
+    constructor(private nativeHttp: HTTP, private util: Utils) {
     }
 
     /**
@@ -27,6 +28,9 @@ export class ApiService {
                 method: 'post',
                 data: body
             }).then(data => {
+                if (data.status === 204) {
+                    this.util.showToastMessage('No content found!', 'warning');
+                }
                 resolve(data);
             }).catch(error => {
                 reject(error);

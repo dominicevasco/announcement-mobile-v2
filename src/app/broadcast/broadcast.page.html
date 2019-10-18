@@ -27,7 +27,7 @@
 
 <ion-content>
   <ion-list *ngFor="let broadcast of broadcasts">
-    <ion-item (click)="view(broadcast._id)">
+    <ion-item (click)="view(broadcast._id,postId==='display')">
       <ion-label>
         <p><b>Start</b> : {{broadcast._startDate}}</p>
         <p><b>End</b> : {{broadcast._expDate}}</p>
