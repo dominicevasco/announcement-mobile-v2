@@ -1,9 +1,12 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ApiService } from 'src/services/api.service';
 import { Post } from 'src/model/post';
 import Utils from 'src/services/message.util';
-import { LoadingController, IonReorderGroup } from '@ionic/angular';
+import { LoadingController, IonReorderGroup, ModalController } from '@ionic/angular';
+import SessionStoreService from 'src/services/session.service';
+import { BroadcastBookmarkPage } from '../broadcast-bookmark/broadcast-bookmark.page';
+import LoadingService from 'src/services/loadingService';
 
 @Component({
   selector: 'app-broadcast-post',
@@ -20,7 +23,7 @@ export class BroadcastPostPage implements OnInit {
   orderOfId: any = [];
 
   constructor(private routerMap: ActivatedRoute, private api: ApiService, private util: Utils,
-    private loader: LoadingController) { }
+    private router: Router, private loadingService: LoadingService) { }
 
   ngOnInit() {
     this.routerMap.paramMap.subscribe(parms => {
@@ -42,53 +45,49 @@ export class BroadcastPostPage implements OnInit {
   }
 
   async updateOrder() {
-    const l = await this.loader.create({
-      message: 'Please wait...'
-    });
-    l.present();
+    await this.loadingService.display('Please wait...', '1')
 
-    setTimeout(() => {
-      this.api.doPost(`/broadcast/reorder/${this.id}`, {
+    try {
+      const data = await this.api.doPost(`/broadcast/reorder/${this.id}`, {
         orderPost: this.orderOfId.join()
-      }).then(data => {
-        if (data.status === 200) {
-          this.util.showToastMessage('Announcement has been reordered!', 'success');
-        }
-      }, err => {
-        this.util.showToastMessage('Error : ' + err.error);
-      }).finally(() => {
-        l.dismiss();
       })
-    }, 1000);
+      if (data.status === 200) {
+        this.util.showToastMessage('Announcement has been reordered!', 'success');
+      }
+    } catch (err) {
+      this.util.showToastMessage('Error : ' + err.error);
+    }
+
+
+    this.loadingService.dismiss('1');
   }
 
   async loadContent() {
-    const l = await this.loader.create({
-      message: 'Please wait...'
-    })
-    l.present();
+    await this.loadingService.display('Checking announcement...', '1');
 
-    setTimeout(() => {
-      this.api.doPost(`/broadcast/posts/${this.id}`, {}).then(data => {
-        const splitArr: [] = JSON.parse(data.data);
-        this.posts = [];
-        splitArr.forEach((item: any, index) => {
-          let post = new Post();
-          post.id = item.id;
-          post.content = item.message;
-          post.dateAdded = item.dateAdded;
+    this.api.doPost(`/broadcast/posts/${this.id}`, {}).then(data => {
+      const splitArr: [] = JSON.parse(data.data);
+      this.posts = [];
+      splitArr.forEach((item: any, index) => {
+        let post = new Post();
+        post.id = item.id;
+        post.content = item.message;
+        post.dateAdded = item.dateAdded;
 
-          post.author = item.user['lastname'] + "," + item.user['firstname']
-          post.authorPic = this.util.validateProfilePic(item.user['profile']);
+        post.author = item.user['lastname'] + "," + item.user['firstname']
+        post.authorPic = this.util.validateProfilePic(item.user['profile']);
 
-          post.type = item.type;
+        post.type = item.type;
 
-          this.posts.push(post);
-          this.orderOfId.push(post.id);
-        })
-
-        l.dismiss();
+        this.posts.push(post);
+        this.orderOfId.push(post.id);
       })
-    }, 2000);
+
+      this.loadingService.dismiss('1');
+    })
+  }
+
+  async addPost() {
+    this.router.navigate(['broadcast-bookmark', this.id])
   }
 }

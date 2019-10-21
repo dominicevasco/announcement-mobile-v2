@@ -26,7 +26,7 @@
 
 <ion-content>
   <!-- actual content -->
-  <ion-card *ngFor="let post of posts"> 
+  <ion-card *ngFor="let post of posts">
     <!-- (click)="viewPost(post.id) -->
     <ion-item>
       <ion-avatar class="ion-margin-end">
@@ -36,9 +36,9 @@
         <h3><b>{{post._author}}</b></h3>
         <p>{{post._dateAdded}}</p>
       </ion-label>
-      <ion-button fill="outline" slot="end" (click)='moreAction(post._id)'>
-        <ion-icon name="cog"></ion-icon>
-      </ion-button>
+      
+      <ion-icon name="flag" slot="end" *ngIf="post._bookmarked"></ion-icon>
+      <ion-icon name="cog" slot="end" (click)='moreAction(post._id,post._bookmarked)' *ngIf="isAdmin"></ion-icon>
     </ion-item>
 
     <ion-card-content *ngIf="post._content!=='null'">{{post._content}}</ion-card-content>

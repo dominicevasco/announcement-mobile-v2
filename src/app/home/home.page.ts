@@ -3,6 +3,7 @@ import SessionStoreService from 'src/services/session.service';
 import { LoadingController } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { ApiService } from 'src/services/api.service';
+import LoadingService from 'src/services/loadingService';
 
 @Component({
   selector: 'app-home',
@@ -16,7 +17,7 @@ export class HomePage implements OnInit {
   notificationNumber: number;
 
   constructor(private sessionStorage: SessionStoreService,
-    private loader: LoadingController,
+    private loaderService : LoadingService,
     private router: Router, private apiService: ApiService) {
 
     this.sessionStorage.getUserData().then(data => {
@@ -25,17 +26,9 @@ export class HomePage implements OnInit {
   }
 
   async logout() {
-    const l = await this.loader.create({
-      message: 'Please wait...'
-    });
-    l.present();
-
-    setTimeout(() => {
-      this.sessionStorage.removeSession().then(() => {
-        l.dismiss();
-        this.router.navigateByUrl("login");
-      })
-    }, 2000);
+    await this.loaderService.display('Logging out...');
+    this.router.navigateByUrl("login");
+    this.loaderService.dismiss();
   }
 
   ngOnInit() {

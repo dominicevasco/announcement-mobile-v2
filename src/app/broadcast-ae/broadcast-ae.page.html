@@ -1,7 +1,7 @@
 <ion-header>
   <ion-toolbar color="secondary">
     <ion-buttons slot="start">
-      <ion-back-button defaultHref="/home"></ion-back-button>
+      <ion-back-button defaultHref="/home/broadcast-calendar"></ion-back-button>
     </ion-buttons>
     <ion-title>
       <b>Broadcast</b>
@@ -11,6 +11,7 @@
 
 <ion-content>
   <ion-list>
+    <!-- start -->
     <ion-item-group>
       <ion-item-divider>
         <ion-label>Start Date</ion-label>
@@ -19,9 +20,13 @@
         <ion-label>Date</ion-label>
         <ion-datetime display-format="DD MMM YYYY" [(ngModel)]="sDate"></ion-datetime>
       </ion-item>
+      <ion-item *ngIf="!isChecked">
+        <ion-label>Time</ion-label>
+        <ion-datetime display-format="HH:mm" [(ngModel)]="sTime"></ion-datetime>
+      </ion-item>
     </ion-item-group>
 
-    <!-- valid until -->
+    <!-- end -->
     <ion-item-group>
       <ion-item-divider>
         <ion-label>End Date</ion-label>
@@ -29,6 +34,10 @@
       <ion-item>
         <ion-label>Date</ion-label>
         <ion-datetime display-format="DD MMM YYYY" [(ngModel)]="eDate"></ion-datetime>
+      </ion-item>
+      <ion-item *ngIf="!isChecked">
+        <ion-label>Time</ion-label>
+        <ion-datetime display-format="HH:mm" [(ngModel)]="eTime"></ion-datetime>
       </ion-item>
     </ion-item-group>
 
@@ -38,12 +47,13 @@
         <ion-label>Duration (<i>for each announcement</i>)</ion-label>
       </ion-item-divider>
       <ion-item>
-          <ion-input inputmode="decimal" [(ngModel)]="interval"></ion-input>
+        <ion-input inputmode="decimal" [(ngModel)]="interval"></ion-input>
       </ion-item>
     </ion-item-group>
 
     <!-- note -->
     <ion-item-group>
+      <!-- {{broadcast._note}} -->
       <ion-item-divider>
         <ion-label>Note (<i>if any</i>)</ion-label>
       </ion-item-divider>
@@ -51,10 +61,18 @@
         <ion-textarea rows="6" cols="20" placeholder="Enter any notes here..." [(ngModel)]="note"></ion-textarea>
       </ion-item>
     </ion-item-group>
+
+    <!-- is allday -->
+    <ion-item-group>
+      <ion-item>
+        <ion-label>All Day</ion-label>
+        <ion-checkbox slot="start" [(ngModel)]="isChecked"></ion-checkbox>
+      </ion-item>
+    </ion-item-group>
   </ion-list>
 
   <ion-button expand="full" class="ion-margin-start ion-margin-end" (click)="submit()">
     <ion-icon slot="start" name="save"></ion-icon>
-    Save
+    {{buttonCaption}}
   </ion-button>
 </ion-content>

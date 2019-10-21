@@ -7,6 +7,16 @@ import { User } from 'src/model/user';
 })
 export default class DefaultAccountService extends LoginAbstract {
 
+    passwordLink(email: any): Promise<any> {
+        const p = new Promise((resolve, reject) => {
+            this.afuth.auth.sendPasswordResetEmail(email).then(() => {
+                resolve();
+            })
+        })
+
+        return p;
+    }
+
     login(username: any, password: any): Promise<any> {
         const login = new Promise((resolve, reject) => {
             this.afuth.auth.signInWithEmailAndPassword(username, password).then(res => {
@@ -35,7 +45,7 @@ export default class DefaultAccountService extends LoginAbstract {
                 res.user.sendEmailVerification().then(() => {
                     const user = new User()
                     user.email = username;
-                    this.util.showToastMessage('Please check your email for account activation.','success');
+                    this.util.showToastMessage('Please check your email for account activation.', 'success');
                     resolve(user);
                 })
             }, err => {
@@ -46,7 +56,4 @@ export default class DefaultAccountService extends LoginAbstract {
 
         return register;
     }
-
-
-
 }

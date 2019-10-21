@@ -14,7 +14,7 @@ export class RegistrationPage implements OnInit {
 
 
   image: any = null;
-  base64Image: any;
+  base64Image: any = null;
 
   username;
   password;

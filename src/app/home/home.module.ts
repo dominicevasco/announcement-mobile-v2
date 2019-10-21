@@ -15,7 +15,7 @@ const routes: Routes = [
       { path: 'post', loadChildren: '../post/post.module#PostPageModule' },
       { path: 'people', loadChildren: '../people/people.module#PeoplePageModule' },
       { path: 'notification', loadChildren: '../notification/notification.module#NotificationPageModule' },
-      { path: 'broadcast/:id', loadChildren: '../broadcast/broadcast.module#BroadcastPageModule' },
+      { path: 'broadcast-calendar', loadChildren: '../broadcast-calendar/broadcast-calendar.module#BroadcastCalendarPageModule' },
       { path: '', pathMatch: 'full', redirectTo: 'post' }
     ]
   }

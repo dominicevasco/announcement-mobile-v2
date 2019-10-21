@@ -1,13 +1,12 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { IonInfiniteScroll, LoadingController, IonContent, ActionSheetController, ModalController } from '@ionic/angular';
+import { ActionSheetController, AlertController, IonContent, IonInfiniteScroll, LoadingController } from '@ionic/angular';
 import { Post } from 'src/model/post';
 import { ApiService } from 'src/services/api.service';
 import Utils from 'src/services/message.util';
 import SessionStoreService from 'src/services/session.service';
-import { ActionSheetButton } from '@ionic/core';
-import { BroadcastPage } from '../broadcast/broadcast.page';
-import { BroadcastPageModule } from '../broadcast/broadcast.module';
+import LoadingService from 'src/services/loadingService';
+import { database } from 'firebase';
 
 @Component({
   selector: 'app-post',
@@ -22,44 +21,41 @@ export class PostPage implements OnInit {
 
   pageNumber: any = 0;
 
+  loggedUserId;
+
+  isAdmin: boolean = false;
+
   @ViewChild(IonInfiniteScroll, { static: false }) infiniteScroll: IonInfiniteScroll;
   @ViewChild(IonContent, { static: false }) content: IonContent;
 
   constructor(private loadingController: LoadingController,
     private apiService: ApiService, private util: Utils,
     private router: Router, private sessionStorage: SessionStoreService,
-    private actionSheet: ActionSheetController) { }
+    private actionSheet: ActionSheetController,
+    private confirm: AlertController,
+    private loadingService: LoadingService) { }
 
   /**
    * If scroll down reached the end.
    * 
    * @param event 
    */
-  loadData(event) {
-    setTimeout(() => {
-      const totalData = this.loadAnnouncement(false);
-      event.target.complete();
-      console.log('returned data ' + totalData);
-    }, 2000);
+  async loadData(event) {
+    await this.loadAnnouncement(false);
+    event.target.complete();
   }
 
   /**
    * On page load
    */
   async ngOnInit() {
-    const loader = await this.loadingController.create({
-      message: 'Please wait...'
-    });
-
-    loader.present();
-
-    setTimeout(() => {
-      this.sessionStorage.getUserData().then(data => {
-        this.profile = this.util.validateProfilePic(data.photo);
-      })
-      this.loadAnnouncement();
-      loader.dismiss();
-    }, 2000);
+    this.sessionStorage.getUserData().then(data => {
+      this.profile = this.util.validateProfilePic(data.photo);
+      this.loggedUserId = data.id;
+      this.name = data.name;
+      this.isAdmin = data.accessType === 'ADMIN';
+    })
+    await this.loadAnnouncement();
   }
 
   /**
@@ -71,28 +67,29 @@ export class PostPage implements OnInit {
   /**
    * Method to display posts
    */
-  loadAnnouncement = (isNewSetData: boolean = true): number => {
-    if (isNewSetData) this.pageNumber = 0;//reset page number
-    //call post from the backend
-    this.apiService.doGet(`/post/all/approved/${this.pageNumber}`, {}).then((data) => {
-      //split because array in string format
-      const splitArr: [] = JSON.parse(data.data);
+  async loadAnnouncement(isNewSetData: boolean = true) {
 
-      if (isNewSetData) this.posts = [];
+    if (isNewSetData) {
+      await this.loadingService.display('Pulling records...', '1');
+      this.pageNumber = 0;
+      this.posts = [];
+    }
 
-      console.log('Total records retrieved : ' + splitArr.length);
+    console.log('User id : ' + this.loggedUserId);
 
-      splitArr.forEach((item: any, index) => {
+    try {
+      const data = await this.apiService.doGet(`/post/all/approved/${this.pageNumber}/${this.loggedUserId}`);
+      const contentArray: [] = JSON.parse(data.data);
+
+      contentArray.forEach((item: any) => {
         let post = new Post();
         post.id = item.id;
         post.content = item.message;
         post.dateAdded = item.dateAdded;
-
         post.author = item.user['lastname'] + "," + item.user['firstname']
         post.authorPic = this.util.validateProfilePic(item.user['profile']);
-
         post.type = item.type;
-
+        post.bookmarked = item.isBookMarked;
 
         if ('null' !== item.file64) {
           if (item.type === 'IMAGE') {
@@ -105,16 +102,14 @@ export class PostPage implements OnInit {
         this.posts.push(post);
       });
 
-      //increment page number
       this.pageNumber += 1;
-      console.log('Page number ' + this.pageNumber);
-
-      return splitArr.length;
-    }, error => {
+    } catch (error) {
       this.util.showToastMessage(error.error, 'danger', 3000);
-    })
+    }
 
-    return 0;
+    if(isNewSetData){
+      this.loadingService.dismiss("1");
+    }
   }
 
   /**
@@ -122,21 +117,11 @@ export class PostPage implements OnInit {
    */
   refreshAnnouncment() {
     this.content.scrollToTop(1000).then(async () => {
-      const loader = await this.loadingController.create({
-        message: 'Please wait...'
-      });
-
-      loader.present();
-      setTimeout(() => {
-
+      setTimeout(async () => {
         this.loadAnnouncement();
-        loader.dismiss();
-      }, 1000);
-
-      console.log('status ' + this.infiniteScroll.disabled);
+      }, 500);
       this.infiniteScroll.disabled = false;
     });
-
   }
 
   /**
@@ -144,22 +129,104 @@ export class PostPage implements OnInit {
    * 
    * @param id 
    */
-  async moreAction(id) {
+  async moreAction(id, isBookMarked) {
+    const actionButton: any = [
+      {
+        text: (isBookMarked ? 'Un-Bookmarked' : 'Bookmark'),
+        icon: 'bookmark',
+        handler: () => {
+          if (isBookMarked) {
+            this.removeBookMark(id);
+          } else {
+            this.addBookmark(id);
+          }
+        }
+      }, {
+        text: 'Delete',
+        icon: 'trash',
+        role: 'destructive',
+        handler: () => {
+          this.removePost(id);
+        }
+      }, {
+        text: 'Cancel',
+        role: 'cancel'
+      }
+    ];
+
     const actions = await this.actionSheet.create({
       header: 'Options',
-      buttons: [
-        {
-          text: 'Add to Broadcast',
-          handler: () => {
-            this.router.navigate(['broadcast/', id])
-          }
-        }, {
-          text: 'Cancel',
-          role: 'cancel'
+      buttons: actionButton
+    });
+    actions.present();
+  }
+
+  /**
+   * Remove post
+   * @param id 
+   */
+  async removePost(id) {
+    const alert = await this.confirm.create({
+      message: 'Are you sure to remove this?',
+      subHeader: 'This action cannot be undone!',
+      buttons: [{
+        text: 'Delete',
+        role: 'destructive',
+        handler: async () => {
+          const load = await this.loadingController.create({
+            message: 'Please wait..'
+          });
+          load.present();
+
+          setTimeout(() => {
+            this.apiService.doDelete(`/post/delete/${id}`, {}).then(data => {
+              this.util.showToastMessage('Announcement has been deleted!', 'warning');
+            })
+            load.dismiss();
+            this.loadAnnouncement();
+          }, 1000);
         }
-      ]
+      }]
     });
 
-    actions.present();
+    await alert.present();
+  }
+
+  /**
+   * Add post to bookmark
+   * @param id 
+   */
+  async addBookmark(id) {
+    await this.loadingService.display('Adding Bookmark...', '1');
+
+    const userData = await this.sessionStorage.getUserData();
+    const data = await this.apiService.doPost(`/bookmark/mark`, {
+      userId: userData.id,
+      postId: id
+    })
+
+    if (data.status === 200) {
+      this.util.showToastMessage('Post has been bookmarked!', 'success');
+    }
+
+    this.loadingService.dismiss('1');
+    this.refreshAnnouncment();
+  }
+
+  /**
+   * Remove post to bookmark
+   */
+  async removeBookMark(id) {
+    await this.loadingService.display('Removing Bookmark...', '1');
+
+    const userData = await this.sessionStorage.getUserData();
+    const data = await this.apiService.doDelete(`/bookmark/remove/${id}/${userData.id}`)
+
+    if (data.status === 200) {
+      this.util.showToastMessage('Post has been un-marked!', 'success');
+    }
+
+    this.loadingService.dismiss('1');
+    this.refreshAnnouncment();
   }
 }

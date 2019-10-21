@@ -1,0 +1,33 @@
+<ion-header>
+  <ion-toolbar color="secondary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/broadcast-post/{{id}}"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Bookmarked List</ion-title>
+    <ion-buttons slot="end" (click)="saveToBroadcast()">
+      <ion-button>Update</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+  <ion-toolbar>
+    <ion-item lines="none">
+      <ion-label>Select All</ion-label>
+      <ion-checkbox></ion-checkbox>
+    </ion-item>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-list>
+    <ion-item *ngFor="let post of bookmarks">
+      <ion-avatar class="ion-margin-end">
+        <img src='{{post._authorPic}}' />
+      </ion-avatar>
+      <ion-label>
+        <h3><b>{{post._author}}</b></h3>
+        <p>{{post._dateAdded}}</p>
+        <p>Content type : <b>{{post._type}}</b></p>
+      </ion-label>
+      <ion-checkbox slot="end" [(ngModel)]="post._bookmarked"></ion-checkbox>
+    </ion-item>
+  </ion-list>
+</ion-content>

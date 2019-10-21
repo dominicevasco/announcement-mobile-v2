@@ -17,7 +17,6 @@ export class PostAePage implements OnInit {
 
   id: any;
   title: string;
-  isPublic: boolean = true;
 
   authorId: any;
   postDate: any;
@@ -56,8 +55,8 @@ export class PostAePage implements OnInit {
 
     this.sessionService.getUserData().then(data => {
       this.authorId = data.id;
-      this.fullname = data.fullname;
-      this.profileImage = data.photo;
+      this.fullname = data.fullname.replace('null','');
+      this.profileImage = this.util.validateProfilePic(data.photo);
     })
   }
 

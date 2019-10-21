@@ -4,6 +4,7 @@ import { ApiService } from 'src/services/api.service';
 import { Broadcast } from 'src/model/broadcast';
 import { LoadingController } from '@ionic/angular';
 import Utils from 'src/services/message.util';
+import LoadingService from 'src/services/loadingService';
 
 @Component({
   selector: 'app-broadcast-ae',
@@ -15,57 +16,116 @@ export class BroadcastAePage implements OnInit {
   id: any;
 
   sDate;
+  sTime;
 
   eDate;
+  eTime;
 
   interval;
 
-  note;
+  note: any;
+
+  buttonCaption: string;
+
+  isChecked;
 
   constructor(private router: ActivatedRoute,
     private util: Utils,
-    private nav: Router, private apiService: ApiService, private loader: LoadingController) { }
+    private nav: Router, private apiService: ApiService, private loadingService: LoadingService) { }
 
   /**
+   * Initial load of the page depending on the status.
    * 
    */
   ngOnInit() {
     this.router.paramMap.subscribe(p => {
       const state = p.get('state');
       if (state === 'add') {
-        this.id = p.get('id');
+        this.buttonCaption = 'Save'
+      } else {
+        this.buttonCaption = 'Update'
+        this.loadDataForEdit(p.get('id'));
       }
-    })
 
-    console.log('id ' + this.id);
+    })
   }
 
+  /**
+   * Load data if edit
+   */
+  async loadDataForEdit(id) {
+    await this.loadingService.display('Please wait...')
+    this.apiService.doGet(`/broadcast/find/${id}`).then(response => {
+      const data = JSON.parse(response.data);
+
+      this.id = data.id;
+      this.note = data.note;
+      this.interval = data.duration;
+      this.isChecked = data.allDay;
+      this.sDate = this.formatDateTime(data.startDate, 0);
+      this.sTime = this.formatDateTime(data.startDate, 1);
+
+      this.eDate = this.formatDateTime(data.expirationDate, 0);
+      this.eTime = this.formatDateTime(data.expirationDate, 1);
+
+      this.loadingService.dismiss();
+    })
+  }
 
   /**
    * Submitt
    */
   async submit() {
-    const l = await this.loader.create({
-      message: 'Please wait...'
-    });
-    l.present();
-    setTimeout(() => {
-      const broadcast = new Broadcast();
+    await this.loadingService.display('Please wait...')
 
-      broadcast.startDate = this.sDate
-      broadcast.expDate = this.eDate
-      broadcast.note = this.note;
-      broadcast.interval = this.interval;
+    const broadcast = new Broadcast();
+    let message: string = 'Broadcast topic created!';
 
-      this.apiService.doPost('/broadcast/create', broadcast).then(data => {
-        if (data.status === 200) {
-          this.util.showToastMessage('Broadcast topic created!', 'success');
-          this.nav.navigateByUrl('/home/broadcast/display');
-        }
-      }, err => {
-        this.util.showToastMessage('Error : ' + err.error);
-      });
-      l.dismiss();
-    }, 1000);
+    broadcast.allDay = this.isChecked;
+    broadcast.startDate = this.formatDateTime(this.sDate, 0) + ' ' + this.formatDateTime(this.sTime, 1)
+    broadcast.expDate = this.formatDateTime(this.eDate, 0) + ' ' + this.formatDateTime(this.eTime, 1)
+    broadcast.note = this.note;
+    broadcast.interval = this.interval;
+
+    if (this.isChecked) {
+      this.sTime = this.formatDateTime(this.sDate, 1);
+      this.eTime = this.formatDateTime(this.eDate, 1);
+    }
+
+    if (this.buttonCaption === 'Update') {
+      broadcast.id = this.id;
+      message = 'Broadcast topic has been updated!';
+    }
+
+    await this.saveOrUpdate(broadcast, message).then(() => {
+      this.loadingService.dismiss();
+    })
+  }
+
+  private async saveOrUpdate(broadcast: Broadcast, message) {
+    try {
+      const apiSave = await this.apiService.doPost('/broadcast/set', broadcast);
+      if (apiSave.status === 200) {
+        this.util.showToastMessage(message, 'success');
+        this.nav.navigateByUrl('/home/broadcast-calendar');
+      }
+    } catch (err) {
+      this.util.showToastMessage('Error : ' + err.error);
+    }
+  }
+
+  /**
+   * format Date Time
+   * @param val 
+   * @param index 
+   */
+  formatDateTime(val, index) {
+    const result: any[] = val.split('T');
+
+    if (result.length > 1) {
+      return result[index];
+    }
+
+    return result[0];
   }
 }

@@ -8,6 +8,16 @@ export class Post {
     private _status: any;
     private _type : any;
 
+    private _bookmarked : boolean;
+
+    public get bookmarked(): boolean {
+        return this._bookmarked;
+    }
+
+    public set bookmarked(bookmarked: boolean) {
+        this._bookmarked = bookmarked;
+    }
+
     public get id(): number {
         return this._id;
     }

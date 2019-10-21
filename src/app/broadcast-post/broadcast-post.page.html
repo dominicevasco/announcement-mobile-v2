@@ -1,11 +1,19 @@
 <ion-header>
   <ion-toolbar color="secondary">
     <ion-buttons slot="start">
-      <ion-back-button defaultHref="/home/broadcast/display"></ion-back-button>
+      <ion-back-button defaultHref="/home/broadcast-calendar"></ion-back-button>
     </ion-buttons>
     <ion-title>Broadcast post</ion-title>
-    <ion-buttons slot="end">
+    <ion-buttons slot="end" *ngIf="orderOfId.length > 0">
       <ion-button (click)="updateOrder()">Update</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+
+  <ion-toolbar>
+    <ion-buttons>
+      <ion-button (click)="addPost()">
+        <ion-icon name="add"></ion-icon>
+      </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>

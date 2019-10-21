@@ -30,8 +30,6 @@ export abstract class LoginAbstract {
                     let pData = JSON.parse(data.data);
                     if (pData.status === 'APPROVED') {
                         this.sessionStore.storeUserData(pData).then(() => {
-                            let x = this.sessionStore.getUserData();
-                            console.log(x);
                             resolve();
                         }, err => {
                             reject(err);
@@ -101,10 +99,18 @@ export abstract class LoginAbstract {
         return result;
     }
 
+    /**
+     * Method for forgot password.
+     * 
+     * @param email 
+     */
+    async forgotPassword(email): Promise<any> {
+        return this.passwordLink(email);
+    }
+
     abstract register(username, password): Promise<User>
     abstract login(username, password): Promise<any>
-
-
+    abstract passwordLink(email): Promise<any>
     /**
      * Since firebase handles the authentication.
      * We save the user details in our own database.

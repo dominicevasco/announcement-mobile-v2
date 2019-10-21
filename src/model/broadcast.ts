@@ -5,6 +5,14 @@ export class Broadcast {
     private _posts: any[];
     private _note: string;
     private _interval: any;
+    private _allDay: boolean;
+
+    public get allDay(): boolean {
+        return this._interval;
+    }
+    public set allDay(allDay: boolean) {
+        this._allDay = allDay;
+    }
 
     public get interval(): any {
         return this._interval;

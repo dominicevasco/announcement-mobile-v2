@@ -3,6 +3,7 @@ import { ActionSheetController, AlertController, LoadingController, ModalControl
 import { ApiService } from 'src/services/api.service';
 import Utils from 'src/services/message.util';
 import SessionStoreService from 'src/services/session.service';
+import { User } from 'src/model/user';
 
 @Component({
   selector: 'app-people',
@@ -60,7 +61,11 @@ export class PeoplePage implements OnInit {
       if (userListData !== null && userListData !== undefined) {
         this.users = [];
         userListData.forEach(item => {
-          this.users.push(item);
+          let itemClone = item;
+          console.log('profile : ' + item.profile);
+          itemClone.profile = this.util.validateProfilePic(item.profile);
+
+          this.users.push(itemClone);
         })
       }
 

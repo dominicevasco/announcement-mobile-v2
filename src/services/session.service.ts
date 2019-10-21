@@ -30,6 +30,7 @@ export default class SessionStoreService {
                 {
                     'id': user.id,
                     'fullname': user.lastname + ',' + user.firstname + ' ' + user.middlename,
+                    'name': user.lastname + ',' + user.firstname,
                     'email': user.email,
                     'photo': user.profile,
                     'accessType': this.checkAccess(user.userType)
@@ -45,16 +46,9 @@ export default class SessionStoreService {
     }
 
 
-    removeSession(): Promise<any> {
-        const p = new Promise((resolve, reject) => {
-            this.session.clear().then(() => {
-                resolve();
-            },erro=>{
-                reject();
-            })
-        })
-
-        return p;
+    async removeSession() {
+        await this.session.remove(SessionStoreService.USER_DATA);
+        await this.session.clear();
     }
 
     /**
@@ -63,6 +57,7 @@ export default class SessionStoreService {
     getUserData(): Promise<any> {
         const p = new Promise((resolve, reject) => {
             this.session.getItem(SessionStoreService.USER_DATA).then(data => {
+                console.log('User data : ' + data);
                 resolve(data);
             })
         })
