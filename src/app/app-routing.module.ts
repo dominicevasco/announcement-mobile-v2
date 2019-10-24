@@ -10,6 +10,7 @@ const routes: Routes = [
   { path: 'broadcast-ae/:state/:id', loadChildren: './broadcast-ae/broadcast-ae.module#BroadcastAePageModule' },
   { path: 'broadcast-post/:id', loadChildren: './broadcast-post/broadcast-post.module#BroadcastPostPageModule' },
   { path: 'broadcast-bookmark/:id', loadChildren: './broadcast-bookmark/broadcast-bookmark.module#BroadcastBookmarkPageModule' },
+  { path: 'profile/:id', loadChildren: './profile/profile.module#ProfilePageModule' },
 ];
 
 @NgModule({

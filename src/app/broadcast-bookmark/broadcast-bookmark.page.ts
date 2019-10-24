@@ -92,7 +92,7 @@ export class BroadcastBookmarkPage implements OnInit {
         this.util.showToastMessage('Error : ' + error.error);
       }
       this.loaderService.dismiss();
-      this.navRouter.navigate(['broadcast-bookmark', this.broadcastId])
+      this.navRouter.navigateByUrl("home/broadcast-calendar");
     } else {
       this.util.showToastMessage('No item has been selected!')
     }

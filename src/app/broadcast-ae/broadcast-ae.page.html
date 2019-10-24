@@ -11,6 +11,17 @@
 
 <ion-content>
   <ion-list>
+    <!-- note -->
+    <ion-item-group>
+      <!-- {{broadcast._note}} -->
+      <ion-item-divider>
+        <ion-label>Title</ion-label>
+      </ion-item-divider>
+      <ion-item>
+        <ion-input placeholder="Enter any notes here..." clearInput value="clear me" maxlength="20" [(ngModel)]="note"></ion-input>
+      </ion-item>
+    </ion-item-group>
+
     <!-- start -->
     <ion-item-group>
       <ion-item-divider>
@@ -18,7 +29,7 @@
       </ion-item-divider>
       <ion-item>
         <ion-label>Date</ion-label>
-        <ion-datetime display-format="DD MMM YYYY" [(ngModel)]="sDate"></ion-datetime>
+        <ion-datetime display-format="DD MMM YYYY" [(ngModel)]="sDate" min="{{dateTill}}"></ion-datetime>
       </ion-item>
       <ion-item *ngIf="!isChecked">
         <ion-label>Time</ion-label>
@@ -33,7 +44,7 @@
       </ion-item-divider>
       <ion-item>
         <ion-label>Date</ion-label>
-        <ion-datetime display-format="DD MMM YYYY" [(ngModel)]="eDate"></ion-datetime>
+        <ion-datetime display-format="DD MMM YYYY" [(ngModel)]="eDate" min="{{dateTill}}"></ion-datetime>
       </ion-item>
       <ion-item *ngIf="!isChecked">
         <ion-label>Time</ion-label>
@@ -44,21 +55,10 @@
     <!-- interval -->
     <ion-item-group>
       <ion-item-divider>
-        <ion-label>Duration (<i>for each announcement</i>)</ion-label>
+        <ion-label>Duration (<i>5 to 15 seconds</i>)</ion-label>
       </ion-item-divider>
       <ion-item>
-        <ion-input inputmode="decimal" [(ngModel)]="interval"></ion-input>
-      </ion-item>
-    </ion-item-group>
-
-    <!-- note -->
-    <ion-item-group>
-      <!-- {{broadcast._note}} -->
-      <ion-item-divider>
-        <ion-label>Note (<i>if any</i>)</ion-label>
-      </ion-item-divider>
-      <ion-item>
-        <ion-textarea rows="6" cols="20" placeholder="Enter any notes here..." [(ngModel)]="note"></ion-textarea>
+        <ion-input inputmode="decimal" [(ngModel)]="interval" maxlength="2" placeholder="0"></ion-input>
       </ion-item>
     </ion-item-group>
 

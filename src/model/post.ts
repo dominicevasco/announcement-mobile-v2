@@ -1,6 +1,7 @@
 export class Post {
     private _id: number;
     private _dateAdded: any;
+    private _authorId : any;
     private _author: any;
     private _content: any;
     private _fileData: any;
@@ -9,6 +10,14 @@ export class Post {
     private _type : any;
 
     private _bookmarked : boolean;
+
+    public get authorId(): number {
+        return this._authorId;
+    }
+
+    public set authorId(authorId: number) {
+        this._authorId = authorId;
+    }
 
     public get bookmarked(): boolean {
         return this._bookmarked;

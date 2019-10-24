@@ -151,23 +151,26 @@ export class BroadcastCalendarPage implements OnInit {
    * Load all broadcast
    */
   async loadBroadcastEvent() {
-    await this.loadingService.display('Please wait...', '1');
+    await this.loadingService.display('Please wait...');
 
     const data = await this.apiService.doGet(`/broadcast/all`, {});
-    const jsonData = JSON.parse(data.data);
-    this.eventSource = []
-    jsonData.forEach((item: any) => {
-      this.eventSource.push({
-        id: item.id,
-        title: item.note,
-        startTime: new Date(item.startDate),
-        endTime: new Date(item.expirationDate),
-        allDay: item.allDay,
-        isPlayed: item.isPlayed
-      });
-    })
+    const dataResponse = data.data;
+    if (null !== dataResponse && undefined !== dataResponse && "" !== dataResponse) {
+      const jsonData = JSON.parse(dataResponse);
+      this.eventSource = []
+      jsonData.forEach((item: any) => {
+        this.eventSource.push({
+          id: item.id,
+          title: item.note,
+          startTime: new Date(item.startDate),
+          endTime: new Date(item.expirationDate),
+          allDay: item.allDay,
+          isPlayed: item.isPlayed
+        });
+      })
+    }
 
-    this.loadingService.dismiss('1');
+    this.loadingService.dismiss();
   }
 
 }

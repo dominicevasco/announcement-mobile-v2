@@ -29,6 +29,9 @@ export class BroadcastAePage implements OnInit {
 
   isChecked;
 
+  today = new Date();
+  dateTill;
+
   constructor(private router: ActivatedRoute,
     private util: Utils,
     private nav: Router, private apiService: ApiService, private loadingService: LoadingService) { }
@@ -38,6 +41,9 @@ export class BroadcastAePage implements OnInit {
    * 
    */
   ngOnInit() {
+    this.today.setDate(this.today.getDate());
+    this.dateTill = this.today.toISOString().substr(0, 10);
+
     this.router.paramMap.subscribe(p => {
       const state = p.get('state');
       if (state === 'add') {
@@ -46,7 +52,6 @@ export class BroadcastAePage implements OnInit {
         this.buttonCaption = 'Update'
         this.loadDataForEdit(p.get('id'));
       }
-
     })
   }
 
@@ -72,34 +77,53 @@ export class BroadcastAePage implements OnInit {
     })
   }
 
+  async validate() {
+    const isIntervalValid = this.interval > 5 && this.interval <= 15;
+    console.log(isIntervalValid);
+    if(isIntervalValid){
+      return Promise.resolve();
+    }else{
+      return Promise.reject('Invalid duration.')
+    }
+  }
+
   /**
    * Submitt
    */
   async submit() {
     await this.loadingService.display('Please wait...')
 
-    const broadcast = new Broadcast();
-    let message: string = 'Broadcast topic created!';
+    //validate
+    this.validate().then(async () => {
+      console.log('Validation passed!');
 
-    broadcast.allDay = this.isChecked;
-    broadcast.startDate = this.formatDateTime(this.sDate, 0) + ' ' + this.formatDateTime(this.sTime, 1)
-    broadcast.expDate = this.formatDateTime(this.eDate, 0) + ' ' + this.formatDateTime(this.eTime, 1)
-    broadcast.note = this.note;
-    broadcast.interval = this.interval;
+      const broadcast = new Broadcast();
+      let message: string = 'Broadcast topic created!';
 
-    if (this.isChecked) {
-      this.sTime = this.formatDateTime(this.sDate, 1);
-      this.eTime = this.formatDateTime(this.eDate, 1);
-    }
+      broadcast.allDay = this.isChecked;
+      broadcast.startDate = this.formatDateTime(this.sDate, 0) + ' ' + this.formatDateTime(this.sTime, 1)
+      broadcast.expDate = this.formatDateTime(this.eDate, 0) + ' ' + this.formatDateTime(this.eTime, 1)
+      broadcast.note = this.note;
+      broadcast.interval = this.interval;
 
-    if (this.buttonCaption === 'Update') {
-      broadcast.id = this.id;
-      message = 'Broadcast topic has been updated!';
-    }
+      if (this.isChecked) {
+        this.sTime = this.formatDateTime(this.sDate, 1);
+        this.eTime = this.formatDateTime(this.eDate, 1);
+      }
 
-    await this.saveOrUpdate(broadcast, message).then(() => {
+      if (this.buttonCaption === 'Update') {
+        broadcast.id = this.id;
+        message = 'Broadcast topic has been updated!';
+      }
+
+      await this.saveOrUpdate(broadcast, message).then(() => {
+        this.loadingService.dismiss();
+      })
+    }, err => {
+      this.util.showToastMessage('Error : ' + err);
       this.loadingService.dismiss();
     })
+
   }
 
   private async saveOrUpdate(broadcast: Broadcast, message) {

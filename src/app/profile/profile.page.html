@@ -1,37 +1,32 @@
 <ion-header>
   <ion-toolbar color="secondary">
-    <ion-avatar slot="start" class="ion-margin" (click)="viewProfile(loggedUserId)">
-      <img src="{{profile}}">
-    </ion-avatar>
-    <ion-label>
-      <h1><b>Newsfeed</b></h1>
-      <p>{{name}}</p>
-    </ion-label>
-  </ion-toolbar>
-
-  <!-- post menus -->
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-button (click)="refreshAnnouncment()">
-        <ion-icon slot="icon-only" name="card"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-    <ion-buttons slot="end">
-      <ion-button (click)="writePost()">
-        <ion-icon slot="icon-only" name="paper"></ion-icon>
-      </ion-button>
+    <ion-buttons>
+      <ion-back-button defaultHref="/"></ion-back-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
+
 <ion-content>
+
+  <!-- profile info -->
+  <ion-list class="ion-margin-top">
+    <ion-item-group>
+      <ion-item lines="none">
+        <ion-avatar style="margin:auto;height:100px;width:100px;">
+          <img src='{{image}}' *ngIf="null!==image" />
+          <img src='../../assets/profile.svg' *ngIf="null===image" />
+        </ion-avatar>
+      </ion-item>
+      <ion-item>
+        <b style="margin:auto;">{{fullname}}</b>
+      </ion-item>
+    </ion-item-group>
+  </ion-list>
+
   <!-- actual content -->
   <ion-card *ngFor="let post of posts">
-    <!-- (click)="viewPost(post.id) -->
     <ion-item>
-      <ion-avatar class="ion-margin-end" (click)="viewProfile(post._authorId)">
-        <img src='{{post._authorPic}}' />
-      </ion-avatar>
       <ion-label>
         <h3 (click)="viewProfile(post._authorId)"><b>{{post._author}}</b></h3>
         <p>{{post._dateAdded}}</p>
@@ -50,7 +45,7 @@
   </ion-card>
 
   <!-- infinte scroll area -->
-  <ion-infinite-scroll threshold="100px" (ionInfinite)="loadData($event)">
+  <ion-infinite-scroll threshold="100px" (ionInfinite)="loadData($event,authorId)">
     <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="Pulling previous announcement...">
     </ion-infinite-scroll-content>
   </ion-infinite-scroll>

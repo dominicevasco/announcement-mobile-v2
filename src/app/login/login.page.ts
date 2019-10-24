@@ -4,6 +4,7 @@ import { ActionSheetController, LoadingController } from '@ionic/angular';
 import Utils from 'src/services/message.util';
 import DefaultAccountService from 'src/services/_login/default.service';
 import SessionStoreService from 'src/services/session.service';
+import LoadingService from 'src/services/loadingService';
 
 @Component({
   selector: 'app-login',
@@ -20,7 +21,8 @@ export class LoginPage implements OnInit {
     private loader: LoadingController,
     private defaultLogin: DefaultAccountService,
     private util: Utils,
-    private sessionStorage: SessionStoreService) { }
+    private sessionStorage: SessionStoreService,
+    private loadingService: LoadingService) { }
 
   /**
    * Method to display registration options.
@@ -57,16 +59,13 @@ export class LoginPage implements OnInit {
    * 
    */
   login = async () => {
-    const l = await this.loader.create({
-      message: 'Please wait...'
-    });
-    l.present()
-    setTimeout(() => {
-      this.defaultLogin.signIn(this.username, this.password).then(() => {
-        this.router.navigateByUrl("home");
-      })
-      l.dismiss();
-    }, 1000);
+    await this.loadingService.display('Please wait...')
+    this.defaultLogin.signIn(this.username, this.password).then(() => {
+      this.router.navigateByUrl("home");
+      this.loadingService.dismiss();
+    }, err => {
+      this.loadingService.dismiss();
+    })
   }
 
   ngOnInit() {
